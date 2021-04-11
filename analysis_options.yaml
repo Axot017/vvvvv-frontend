@@ -1,0 +1,7 @@
+include: package:lint/analysis_options.yaml
+
+linter:
+  rules:
+    always_put_required_named_parameters_first: false
+    prefer_single_quotes: true
+    lines_longer_than_80_chars: true
