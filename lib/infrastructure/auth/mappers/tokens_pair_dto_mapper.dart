@@ -2,10 +2,10 @@ import 'package:vvvvv_frontend/domain/auth/model/tokens_pair.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/dtos/tokens_pair_dto.dart';
 import 'package:vvvvv_frontend/utils/current_date_provder.dart';
 
-class TokenPairDtoMapper {
+class TokensPairDtoMapper {
   final CurrentDateProvider _currentDateProvider;
 
-  TokenPairDtoMapper(this._currentDateProvider);
+  TokensPairDtoMapper(this._currentDateProvider);
 
   TokensPair toModel(TokensPairDto dto) {
     final now = _currentDateProvider.getCurrentDate();

@@ -17,5 +17,5 @@ class TokensPairDto {
   });
 
   factory TokensPairDto.fromJson(Map<String, dynamic> json) =>
-      _$TokenPairDtoFromJson(json);
+      _$TokensPairDtoFromJson(json);
 }

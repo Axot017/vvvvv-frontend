@@ -1,18 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/dtos/tokens_pair_dto.dart';
-import 'package:vvvvv_frontend/infrastructure/auth/mappers/token_pair_dto_mapper.dart';
+import 'package:vvvvv_frontend/infrastructure/auth/mappers/tokens_pair_dto_mapper.dart';
 import 'package:vvvvv_frontend/utils/current_date_provder.dart';
 
 class MockedCurrentDateProvider extends Mock implements CurrentDateProvider {}
 
 void main() {
   late MockedCurrentDateProvider mockedCurrentDateProvider;
-  late TokenPairDtoMapper tokenPairDtoMapper;
+  late TokensPairDtoMapper tokenPairDtoMapper;
 
   setUp(() {
     mockedCurrentDateProvider = MockedCurrentDateProvider();
-    tokenPairDtoMapper = TokenPairDtoMapper(mockedCurrentDateProvider);
+    tokenPairDtoMapper = TokensPairDtoMapper(mockedCurrentDateProvider);
   });
 
   test('should convert dto to model', () {
