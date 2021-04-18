@@ -7,6 +7,8 @@ import 'package:vvvvv_frontend/infrastructure/auth/mappers/tokens_pair_dto_mappe
 
 class AuthRepositoryImpl implements AuthRepository {
   final TokensPairDaoMapper _tokensPairDaoMapper;
+
+  // ignore: unused_field
   final TokensPairDtoMapper _tokensPairDtoMapper;
   final AuthLocalDataSource _authLocalDataSource;
   final AuthRemoteDataSource _authRemoteDataSource;
