@@ -19,7 +19,7 @@ void main() {
     when(() => mockedCurrentDateProvider.getCurrentDate())
         .thenReturn(DateTime.now());
 
-    const dto = TokensPairDto(
+    final dto = TokensPairDto(
       accessToken: 'accessToken',
       refreshToken: 'refreshToken',
       accessTokenValidFor: 111,

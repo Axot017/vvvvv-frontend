@@ -9,7 +9,7 @@ class TokensPairDto {
   final int accessTokenValidFor;
   final int refreshTokenValidFor;
 
-  const TokensPairDto({
+  TokensPairDto({
     required this.accessToken,
     required this.refreshToken,
     required this.accessTokenValidFor,
