@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:vvvvv_frontend/infrastructure/config/hive_configuration.dart';
+import 'package:vvvvv_frontend/config/hive_configuration.dart';
 
 part 'tokens_pair_dao.g.dart';
 

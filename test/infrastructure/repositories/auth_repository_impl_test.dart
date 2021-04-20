@@ -82,4 +82,105 @@ void main() {
     verify(() => authLocalDataSource.getToken()).called(1);
     verify(() => tokensPairDaoMapper.toModel(dao)).called(1);
   });
+
+  test('should return null if there are no token in local store', () async {
+    when(() => authLocalDataSource.getToken())
+        .thenAnswer((invocation) => Future.value());
+
+    final result = await authRepository.getSavedToken();
+
+    expect(result, equals(null));
+    verify(() => authLocalDataSource.getToken()).called(1);
+    verifyNever(() => tokensPairDaoMapper.toModel(any()));
+  });
+
+  test('should return tokens pair after login and save it to local storage',
+      () async {
+    final dto = TokensPairDto(
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken',
+      accessTokenValidFor: 123,
+      refreshTokenValidFor: 123,
+    );
+    final model = TokensPair(
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken',
+      accessTokenExpirationDate: DateTime(2020),
+      refreshTokenExpiretionDate: DateTime(2021),
+    );
+    final dao = TokensPairDao(
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken',
+      accessTokenExpirationDate: DateTime(2020),
+      refreshTokenExpiretionDate: DateTime(2021),
+    );
+    when(() => authRemoteDataSource.login(
+          email: any(named: 'email'),
+          password: any(named: 'password'),
+          clientSecret: any(named: 'clientSecret'),
+        )).thenAnswer((_) => Future.value(dto));
+    when(() => tokensPairDtoMapper.toModel(any())).thenReturn(model);
+    when(() => tokensPairDaoMapper.fromModel(any())).thenReturn(dao);
+    when(() => authLocalDataSource.saveToken(any()))
+        .thenAnswer((_) => Future.value());
+
+    final result = await authRepository.login('login', 'password');
+
+    expect(result, equals(model));
+    verify(() => authRemoteDataSource.login(
+          email: 'login',
+          password: 'password',
+          clientSecret: any(named: 'clientSecret'),
+        )).called(1);
+    verify(() => tokensPairDtoMapper.toModel(dto)).called(1);
+    verify(() => tokensPairDaoMapper.fromModel(model)).called(1);
+    verify(() => authLocalDataSource.saveToken(dao)).called(1);
+  });
+
+  test('should return tokens pair after refresh and save it to local storage',
+      () async {
+    final dto = TokensPairDto(
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken',
+      accessTokenValidFor: 123,
+      refreshTokenValidFor: 123,
+    );
+    final lastToken = TokensPair(
+      accessToken: 'lastAccessToken',
+      refreshToken: 'lastRefreshToken',
+      accessTokenExpirationDate: DateTime(2020),
+      refreshTokenExpiretionDate: DateTime(2021),
+    );
+    final model = TokensPair(
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken',
+      accessTokenExpirationDate: DateTime(2020),
+      refreshTokenExpiretionDate: DateTime(2021),
+    );
+    final dao = TokensPairDao(
+      accessToken: 'accessToken',
+      refreshToken: 'refreshToken',
+      accessTokenExpirationDate: DateTime(2020),
+      refreshTokenExpiretionDate: DateTime(2021),
+    );
+    when(() => authRemoteDataSource.refreshToken(
+          refreshToken: any(named: 'refreshToken'),
+          clientSecret: any(named: 'clientSecret'),
+        )).thenAnswer((_) => Future.value(dto));
+    when(() => tokensPairDtoMapper.toModel(any())).thenReturn(model);
+    when(() => tokensPairDaoMapper.fromModel(any())).thenReturn(dao);
+    when(() => authLocalDataSource.saveToken(any()))
+        .thenAnswer((_) => Future.value());
+
+    final result = await authRepository.refreshToken(lastToken);
+
+    expect(result, equals(model));
+    verify(() => authRemoteDataSource.refreshToken(
+          refreshToken: lastToken.refreshToken,
+          clientSecret: any(named: 'clientSecret'),
+        ));
+    verify(() => tokensPairDtoMapper.toModel(dto)).called(1);
+    verify(() => tokensPairDaoMapper.fromModel(model)).called(1);
+    verify(() => authLocalDataSource.saveToken(dao)).called(1);
+  });
 }
