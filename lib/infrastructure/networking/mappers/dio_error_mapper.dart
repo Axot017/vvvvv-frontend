@@ -1,5 +1,8 @@
-import 'package:vvvvv_frontend/domain/failures/failures.dart';
+import 'dart:io';
+
+import 'package:vvvvv_frontend/domain/failures/failure.dart';
 import 'package:dio/dio.dart';
+import 'package:vvvvv_frontend/domain/failures/network_filures.dart';
 import 'package:vvvvv_frontend/infrastructure/networking/dtos/request_error_dto.dart';
 
 const _timeoutErrors = [
@@ -15,6 +18,9 @@ class DioErrorMapper {
     } else if (_timeoutErrors.contains(dioError.type)) {
       return ConnectionFailure(dioError);
     } else {
+      if (dioError.error is SocketException) {
+        return ConnectionFailure(dioError);
+      }
       return UnknownRequestFailure(dioError);
     }
   }
@@ -22,6 +28,10 @@ class DioErrorMapper {
   Failure _mapResponseError(DioError dioError) {
     if ((dioError.response?.statusCode ?? 500) >= 500) {
       return ServerFailure(dioError);
+    } else if (dioError.response?.statusCode == HttpStatus.unauthorized) {
+      return AuthenticationFailure(dioError);
+    } else if (dioError.response?.statusCode == HttpStatus.forbidden) {
+      return UnauthenticatedFailure(dioError);
     } else {
       final data = dioError.response?.data as Map<String, dynamic>?;
 

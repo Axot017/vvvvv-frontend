@@ -59,4 +59,13 @@ void main() {
 
     expect(result, equals(null));
   });
+
+  test('should remove token from box', () async {
+    when(() => tokensBox.delete(any()))
+        .thenAnswer((invocation) => Future.value(null));
+
+    await dataSource.clear();
+
+    verify(() => tokensBox.delete(any())).called(1);
+  });
 }

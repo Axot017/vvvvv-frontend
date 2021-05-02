@@ -18,4 +18,9 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> saveToken(TokensPairDao tokensPairDao) {
     return _tokensBox.put(_tokensPairKey, tokensPairDao);
   }
+
+  @override
+  Future<void> clear() {
+    return _tokensBox.delete(_tokensPairKey);
+  }
 }

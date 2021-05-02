@@ -1,16 +1,5 @@
+import 'package:vvvvv_frontend/domain/failures/failure.dart';
 import 'package:vvvvv_frontend/localization/locale_keys.g.dart';
-
-class Failure {
-  final String messageKey;
-  final dynamic originalError;
-  final List<String> args;
-
-  const Failure(
-    this.originalError, {
-    this.messageKey = LocaleKeys.error_something_went_wrong,
-    this.args = const [],
-  });
-}
 
 class UnknownRequestFailure extends Failure {
   const UnknownRequestFailure(dynamic originalError) : super(originalError);
@@ -45,5 +34,21 @@ class ServerFailure extends Failure {
           originalError,
           messageKey: messageKey,
           args: args,
+        );
+}
+
+class AuthenticationFailure extends Failure {
+  AuthenticationFailure(dynamic originalError)
+      : super(
+          originalError,
+          messageKey: LocaleKeys.error_unauthenticated,
+        );
+}
+
+class UnauthenticatedFailure extends Failure {
+  UnauthenticatedFailure(dynamic originalError)
+      : super(
+          originalError,
+          messageKey: LocaleKeys.error_unauthenticated,
         );
 }

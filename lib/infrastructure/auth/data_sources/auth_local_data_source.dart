@@ -4,4 +4,6 @@ abstract class AuthLocalDataSource {
   Future<void> saveToken(TokensPairDao tokensPairDao);
 
   Future<TokensPairDao?> getToken();
+
+  Future<void> clear();
 }
