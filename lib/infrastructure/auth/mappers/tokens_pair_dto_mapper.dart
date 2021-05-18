@@ -1,4 +1,4 @@
-import 'package:vvvvv_frontend/domain/auth/model/tokens_pair.dart';
+import 'package:vvvvv_frontend/domain/auth/models/tokens_pair.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/dtos/tokens_pair_dto.dart';
 import 'package:vvvvv_frontend/utils/current_date_provder.dart';
 

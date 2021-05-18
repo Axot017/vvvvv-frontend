@@ -7,7 +7,7 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  auto_route: ^1.0.2
+  auto_route: ^2.2.0
   easy_localization: ^3.0.0
   flutter:
     sdk: flutter
@@ -20,18 +20,18 @@ dependencies:
   logger: ^1.0.0
   mocktail: ^0.1.1
   pretty_dio_logger: ^1.2.0-beta-1
-  retrofit: ^2.0.0-beta1
+  retrofit: ^2.0.0
 
 dev_dependencies:
-  auto_route_generator: ^1.0.2
-  build_runner: ^1.12.2
+  auto_route_generator: ^2.1.0
+  build_runner: ^2.0.3
   flutter_test:
     sdk: flutter
   freezed: ^0.14.1+2
   hive_generator: ^1.0.1
   json_serializable: ^4.1.0
   lint: ^1.0.0
-  retrofit_generator: ^2.0.0-beta3
+  retrofit_generator: ^2.0.0
 
 flutter:
   uses-material-design: true

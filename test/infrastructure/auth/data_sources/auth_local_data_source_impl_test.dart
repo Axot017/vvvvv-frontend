@@ -4,6 +4,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/daos/tokens_pair_dao.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/data_sources/auth_local_data_source_impl.dart';
 
+import '../../../falback_values.dart';
+
 class MockedTokensBox extends Mock implements Box<TokensPairDao> {}
 
 void main() {
@@ -11,12 +13,7 @@ void main() {
   late AuthLocalDataSourceImpl dataSource;
 
   setUpAll(() {
-    registerFallbackValue(TokensPairDao(
-      accessToken: 'accessToken',
-      refreshToken: 'refreshToken',
-      accessTokenExpirationDate: DateTime(2020),
-      refreshTokenExpiretionDate: DateTime(2021),
-    ));
+    registerAllFallbackValues();
   });
 
   setUp(() {

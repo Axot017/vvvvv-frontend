@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:vvvvv_frontend/domain/auth/model/tokens_pair.dart';
+import 'package:vvvvv_frontend/domain/auth/models/tokens_pair.dart';
 import 'package:vvvvv_frontend/domain/auth/repositories/auth_repository.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/daos/tokens_pair_dao.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/data_sources/auth_local_data_source.dart';
@@ -9,6 +9,8 @@ import 'package:vvvvv_frontend/infrastructure/auth/dtos/tokens_pair_dto.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/mappers/tokens_pair_dao_mapper.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/mappers/tokens_pair_dto_mapper.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/repositories/auth_repository_impl.dart';
+
+import '../../../falback_values.dart';
 
 class MockedTokensPairDaoMapper extends Mock implements TokensPairDaoMapper {}
 
@@ -26,24 +28,7 @@ void main() {
   late AuthRepository authRepository;
 
   setUpAll(() {
-    registerFallbackValue(TokensPair(
-      accessToken: 'accessToken',
-      refreshToken: 'refreshToken',
-      accessTokenExpirationDate: DateTime(2020),
-      refreshTokenExpiretionDate: DateTime(2021),
-    ));
-    registerFallbackValue(TokensPairDao(
-      accessToken: 'accessToken',
-      refreshToken: 'refreshToken',
-      accessTokenExpirationDate: DateTime(2020),
-      refreshTokenExpiretionDate: DateTime(2021),
-    ));
-    registerFallbackValue(TokensPairDto(
-      accessToken: 'accessToken',
-      refreshToken: 'refreshToken',
-      accessTokenValidFor: 123,
-      refreshTokenValidFor: 123,
-    ));
+    registerAllFallbackValues();
   });
 
   setUp(() {

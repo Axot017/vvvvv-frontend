@@ -30,12 +30,10 @@ class DioErrorMapper {
       return ServerFailure(dioError);
     } else if (dioError.response?.statusCode == HttpStatus.unauthorized) {
       return AuthenticationFailure(dioError);
-    } else if (dioError.response?.statusCode == HttpStatus.forbidden) {
-      return UnauthenticatedFailure(dioError);
     } else {
-      final data = dioError.response?.data as Map<String, dynamic>?;
+      final data = dioError.response?.data;
 
-      if (data == null) {
+      if (data == null || data is! Map<String, dynamic>) {
         return UnknownRequestFailure(dioError);
       }
 

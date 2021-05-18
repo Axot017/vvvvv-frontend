@@ -46,7 +46,96 @@ void main() {
   });
 
   test('should return UnknownRequestFailure on unknown "other" dio error', () {
-    final error = DioError(requestOptions: RequestOptions(path: ''));
+    final error = DioError(
+      requestOptions: RequestOptions(path: ''),
+    );
+
+    final result = mapper.toFailure(error);
+
+    expect(result, isA<UnknownRequestFailure>());
+  });
+
+  test('should return ServerFailure when response code is equal 500 or greater',
+      () {
+    final requestOptions = RequestOptions(path: '');
+    final error = DioError(
+      type: DioErrorType.response,
+      requestOptions: requestOptions,
+      response: Response(
+        statusCode: 500,
+        requestOptions: requestOptions,
+      ),
+    );
+
+    final result = mapper.toFailure(error);
+
+    expect(result, isA<ServerFailure>());
+  });
+
+  test('should return AuthenticationFailure when response code is equal 401',
+      () {
+    final requestOptions = RequestOptions(path: '');
+    final error = DioError(
+      type: DioErrorType.response,
+      requestOptions: requestOptions,
+      response: Response(
+        statusCode: 401,
+        requestOptions: requestOptions,
+      ),
+    );
+
+    final result = mapper.toFailure(error);
+
+    expect(result, isA<AuthenticationFailure>());
+  });
+  test('should return RequestFailure with mapped body', () {
+    final requestOptions = RequestOptions(path: '');
+    const testMessage = 'testMessage';
+    const testMessageKey = 'error.testMessageKey';
+    const testMessageArgs = {'testArg': '1'};
+    final error = DioError(
+      type: DioErrorType.response,
+      requestOptions: requestOptions,
+      response: Response(
+        statusCode: 400,
+        requestOptions: requestOptions,
+        data: {
+          'message': testMessage,
+          'messageKey': testMessageKey,
+          'messageArgs': testMessageArgs,
+        },
+      ),
+    );
+
+    final result = mapper.toFailure(error);
+
+    expect(
+        result,
+        isA<RequestFailure>()
+            .having(
+              (failure) => failure.messageKey,
+              'messageKey',
+              equals(testMessageKey),
+            )
+            .having(
+              (failure) => failure.args,
+              'args',
+              equals(testMessageArgs),
+            ));
+  });
+
+  test('should return UnknownRequestFailure when body is in unknown format',
+      () {
+    final requestOptions = RequestOptions(path: '');
+    final error = DioError(
+      type: DioErrorType.response,
+      requestOptions: requestOptions,
+      response: Response(
+        statusCode: 400,
+        requestOptions: requestOptions,
+        data: [],
+      ),
+    );
 
     final result = mapper.toFailure(error);
 

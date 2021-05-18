@@ -1,4 +1,4 @@
-import 'package:vvvvv_frontend/domain/auth/model/tokens_pair.dart';
+import 'package:vvvvv_frontend/domain/auth/models/tokens_pair.dart';
 import 'package:vvvvv_frontend/domain/auth/repositories/auth_repository.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/data_sources/auth_local_data_source.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/data_sources/auth_remote_data_source.dart';
