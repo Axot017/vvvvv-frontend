@@ -10,8 +10,8 @@ class RequestErrorDto {
   @JsonKey()
   final String messageKey;
 
-  @JsonKey(defaultValue: <String>[])
-  final List<String> messageArgs;
+  @JsonKey(defaultValue: <String, String>{})
+  final Map<String, String> messageArgs;
 
   const RequestErrorDto({
     required this.message,
