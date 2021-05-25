@@ -10,7 +10,7 @@ import 'package:vvvvv_frontend/infrastructure/auth/mappers/tokens_pair_dao_mappe
 import 'package:vvvvv_frontend/infrastructure/auth/mappers/tokens_pair_dto_mapper.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/repositories/auth_repository_impl.dart';
 
-import '../../../falback_values.dart';
+import '../../../fallback_values.dart';
 
 class MockedTokensPairDaoMapper extends Mock implements TokensPairDaoMapper {}
 

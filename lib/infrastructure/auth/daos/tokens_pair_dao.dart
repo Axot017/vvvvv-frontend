@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
-import 'package:vvvvv_frontend/config/hive_configuration.dart';
+import 'package:vvvvv_frontend/config/hive_config.dart';
 
 part 'tokens_pair_dao.g.dart';
 
-@HiveType(typeId: HiveConfiguration.tokensPairDaoId)
+@HiveType(typeId: HiveConfig.tokensPairDaoId)
 class TokensPairDao extends HiveObject {
   @HiveField(0)
   final String accessToken;

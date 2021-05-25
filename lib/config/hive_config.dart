@@ -1,3 +1,3 @@
-class HiveConfiguration {
+class HiveConfig {
   static const tokensPairDaoId = 0;
 }

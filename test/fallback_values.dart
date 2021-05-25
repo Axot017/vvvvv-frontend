@@ -23,6 +23,10 @@ void registerAllFallbackValues() {
     accessTokenValidFor: 123,
     refreshTokenValidFor: 123,
   ));
-  registerFallbackValue(RequestOptions(path: ''));
-  registerFallbackValue(DioError(requestOptions: RequestOptions(path: '')));
+  registerFallbackValue(RequestOptions(
+    path: '',
+  ));
+  registerFallbackValue(DioError(
+    requestOptions: RequestOptions(path: ''),
+  ));
 }
