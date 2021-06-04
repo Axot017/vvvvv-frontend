@@ -3,11 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:vvvvv_frontend/infrastructure/profile/dtos/create_user_dto.dart';
 import 'package:vvvvv_frontend/infrastructure/profile/dtos/current_user_dto.dart';
 
-part 'profile_data_source.g.dart';
+part 'profile_remote_data_source.g.dart';
 
 @RestApi()
-abstract class ProfileDataSource {
-  factory ProfileDataSource(Dio dio) = _ProfileDataSource;
+abstract class ProfileRemoteDataSource {
+  factory ProfileRemoteDataSource(Dio dio) = _ProfileRemoteDataSource;
 
   @GET('/account/current')
   Future<CurrentUserDto> getCurrentUser();

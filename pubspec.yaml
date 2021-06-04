@@ -11,7 +11,7 @@ dependencies:
   easy_localization: ^3.0.0
   flutter:
     sdk: flutter
-  flutter_hooks: ^0.16.0
+  flutter_hooks: ^0.17.0
   freezed_annotation: ^0.14.1
   hive: ^2.0.3
   hive_flutter: ^1.0.0
@@ -32,6 +32,13 @@ dev_dependencies:
   json_serializable: ^4.1.0
   lint: ^1.0.0
   retrofit_generator: ^2.0.0
+
+dependency_overrides:
+  retrofit_generator:
+    git:
+      url: git@github.com:Chimerapps/retrofit.dart
+      ref: 9f90296751984b359937c38563da5b19db5550f5
+      path: generator
 
 flutter:
   uses-material-design: true
