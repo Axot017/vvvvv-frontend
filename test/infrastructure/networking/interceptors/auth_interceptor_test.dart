@@ -8,7 +8,7 @@ import 'package:vvvvv_frontend/infrastructure/auth/data_sources/auth_local_data_
 import 'package:vvvvv_frontend/infrastructure/networking/interceptors/auth_interceptor.dart';
 import 'package:dio/dio.dart';
 
-import '../../../falback_values.dart';
+import '../../../fallback_values.dart';
 
 class MockedAuthLocalDataSource extends Mock implements AuthLocalDataSource {}
 
