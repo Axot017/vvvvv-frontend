@@ -11,7 +11,7 @@ import 'package:vvvvv_frontend/infrastructure/style/repositories/app_colors_repo
 import 'package:vvvvv_frontend/style/app_colors.dart';
 
 final appColorsProvider =
-    StateNotifierProvider<AppColorsNotifier, AppColors>((ref) {
+    StateNotifierProvider.autoDispose<AppColorsNotifier, AppColors>((ref) {
   final interactor = ref.watch(_appColorsInteractorProvider);
 
   return AppColorsNotifier(interactor);
