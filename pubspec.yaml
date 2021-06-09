@@ -31,14 +31,7 @@ dev_dependencies:
   hive_generator: ^1.0.1
   json_serializable: ^4.1.0
   lint: ^1.0.0
-  retrofit_generator: ^2.0.0
-
-dependency_overrides:
-  retrofit_generator:
-    git:
-      url: git@github.com:Chimerapps/retrofit.dart
-      ref: 9f90296751984b359937c38563da5b19db5550f5
-      path: generator
+  retrofit_generator: ^2.0.0+1
 
 flutter:
   uses-material-design: true

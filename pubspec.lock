@@ -556,12 +556,10 @@ packages:
   retrofit_generator:
     dependency: "direct dev"
     description:
-      path: generator
-      ref: "9f90296751984b359937c38563da5b19db5550f5"
-      resolved-ref: "9f90296751984b359937c38563da5b19db5550f5"
-      url: "git@github.com:Chimerapps/retrofit.dart"
-    source: git
-    version: "2.0.0"
+      name: retrofit_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0+1"
   riverpod:
     dependency: transitive
     description:
