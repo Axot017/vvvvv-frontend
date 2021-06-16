@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:vvvvv_frontend/infrastructure/networking/mappers/dio_error_mapper.dart';
 import 'package:dio/dio.dart';
 
@@ -8,7 +6,7 @@ class WithDioErrorMapperDecorator {
 
   WithDioErrorMapperDecorator(this._dioErrorMapper);
 
-  FutureOr<T> call<T>(FutureOr<T> Function() fn) {
+  T call<T>(T Function() fn) {
     try {
       return fn();
     } on DioError catch (e) {

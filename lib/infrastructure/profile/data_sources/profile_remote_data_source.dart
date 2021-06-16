@@ -13,5 +13,5 @@ abstract class ProfileRemoteDataSource {
   Future<CurrentUserDto> getCurrentUser();
 
   @POST('/account/create')
-  Future<CurrentUserDto> createUser(@Body() CreateUserDto createUserDto);
+  Future<void> createUser(@Body() CreateUserDto createUserDto);
 }

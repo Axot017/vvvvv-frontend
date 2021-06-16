@@ -43,7 +43,7 @@ void main() {
   test('should rethrow error if its not DioError', () async {
     final exception = Exception('test exception');
     try {
-      await _withDioErrorMapper(() {
+      await _withDioErrorMapper(() async {
         throw exception;
       });
     } catch (e) {
