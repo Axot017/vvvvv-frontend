@@ -1,4 +1,11 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:vvvvv_frontend/utils/current_date_provder.dart';
 
-final currentDateProvider = Provider((_) => CurrentDateProvider());
+final currentDateProvider = Provider<CurrentDateProvider>((ref) {
+  return CurrentDateProvider();
+});
+
+final loggerProvider = Provider<Logger>((ref) {
+  return Logger(level: Level.warning, printer: PrettyPrinter());
+});

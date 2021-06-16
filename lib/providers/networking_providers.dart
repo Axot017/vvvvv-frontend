@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -7,29 +6,29 @@ import 'package:vvvvv_frontend/infrastructure/networking/decorators/with_dio_err
 import 'package:vvvvv_frontend/infrastructure/networking/interceptors/auth_interceptor.dart';
 import 'package:vvvvv_frontend/infrastructure/networking/mappers/dio_error_mapper.dart';
 import 'package:vvvvv_frontend/providers/auth_providers.dart';
+import 'package:vvvvv_frontend/providers/utils_providers.dart';
 
 final unauthenticatedDioProvider = Provider<Dio>((ref) {
+  final dioLogger = ref.watch(_dioLoggerProvider);
+
   final dio = Dio(BaseOptions(
     baseUrl: GeneralConfig.baseUrl,
   ));
 
-  if (kDebugMode) {
-    dio.interceptors.add(PrettyDioLogger());
-  }
+  dio.interceptors.add(dioLogger);
 
   return dio;
 });
 
 final authenticatedDioProvider = Provider<Dio>((ref) {
   final authInterceptor = ref.watch(_authInterceptorProvider);
+  final dioLogger = ref.watch(_dioLoggerProvider);
+
   final dio = Dio(BaseOptions(
     baseUrl: GeneralConfig.baseUrl,
   ));
 
-  if (kDebugMode) {
-    dio.interceptors.add(PrettyDioLogger());
-  }
-
+  dio.interceptors.add(dioLogger);
   dio.interceptors.add(authInterceptor);
 
   return dio;
@@ -50,4 +49,12 @@ final _authInterceptorProvider = Provider<AuthInterceptor>((ref) {
 
 final _dioErrorMapperProvider = Provider<DioErrorMapper>((ref) {
   return DioErrorMapper();
+});
+
+final _dioLoggerProvider = Provider<PrettyDioLogger>((ref) {
+  final logger = ref.watch(loggerProvider);
+
+  return PrettyDioLogger(
+    logPrint: logger.i,
+  );
 });
