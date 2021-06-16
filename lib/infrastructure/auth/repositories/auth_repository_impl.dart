@@ -31,7 +31,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<TokensPair> login(String login, String password) async {
-    final clientSecret = GeneralConfig.clientSecret;
+    const clientSecret = GeneralConfig.clientSecret;
 
     final dto = await _authRemoteDataSource.login(
       email: login,
@@ -47,7 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<TokensPair> refreshToken(TokensPair tokensPair) async {
-    final clientSecret = GeneralConfig.clientSecret;
+    const clientSecret = GeneralConfig.clientSecret;
 
     final dto = await _authRemoteDataSource.refreshToken(
       refreshToken: tokensPair.refreshToken,
