@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:vvvvv_frontend/domain/failures/failure.dart';
 import 'package:dio/dio.dart';
-import 'package:vvvvv_frontend/domain/failures/network_filures.dart';
+import 'package:vvvvv_frontend/domain/failures/network_failures.dart';
 import 'package:vvvvv_frontend/infrastructure/networking/dtos/request_error_dto.dart';
 
 const _timeoutErrors = [

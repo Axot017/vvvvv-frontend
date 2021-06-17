@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:vvvvv_frontend/domain/failures/network_filures.dart';
+import 'package:vvvvv_frontend/domain/failures/network_failures.dart';
 import 'package:vvvvv_frontend/infrastructure/networking/decorators/with_dio_error_mapper_decorator.dart';
 import 'package:vvvvv_frontend/infrastructure/networking/mappers/dio_error_mapper.dart';
 import 'package:dio/dio.dart';
@@ -22,10 +22,10 @@ void main() {
     _withDioErrorMapper = WithDioErrorMapperDecorator(_dioErrorMapper);
   });
 
-  test('should return result of function if tehre is no error', () {
+  test('should return result of function if tehre is no error', () async {
     const testResult = 'test result';
 
-    final result = _withDioErrorMapper(() => testResult);
+    final result = await _withDioErrorMapper(() => testResult);
 
     expect(result, equals(testResult));
     verifyNever(() => _dioErrorMapper.toFailure(any()));
@@ -58,7 +58,7 @@ void main() {
     when(() => _dioErrorMapper.toFailure(any())).thenReturn(failure);
 
     try {
-      _withDioErrorMapper(() {
+      await _withDioErrorMapper(() async {
         throw exception;
       });
     } catch (e) {

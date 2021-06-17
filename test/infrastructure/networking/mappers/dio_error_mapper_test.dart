@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dio/dio.dart';
-import 'package:vvvvv_frontend/domain/failures/network_filures.dart';
+import 'package:vvvvv_frontend/domain/failures/network_failures.dart';
 import 'package:vvvvv_frontend/infrastructure/networking/mappers/dio_error_mapper.dart';
 
 void main() {

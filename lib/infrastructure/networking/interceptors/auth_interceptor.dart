@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:vvvvv_frontend/domain/auth/interactors/auth_interactor.dart';
 import 'package:vvvvv_frontend/domain/failures/local_storage_failures.dart';
-import 'package:vvvvv_frontend/domain/failures/network_filures.dart';
+import 'package:vvvvv_frontend/domain/failures/network_failures.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/data_sources/auth_local_data_source.dart';
 
 const _authHeader = 'Authorization';
