@@ -1,7 +1,21 @@
 import 'dart:async';
 
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:meta/meta.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+void useActionListener<STATE, ACTION>(
+  ActionHandler<STATE, ACTION> actionHandler,
+  void Function(ACTION) onAction,
+) {
+  useEffect(() {
+    final subscription = actionHandler.actionStream.listen((event) {
+      onAction(event);
+    });
+
+    return subscription.cancel;
+  });
+}
 
 mixin ActionHandler<STATE, ACTION> on StateNotifier<STATE> {
   final _streamController = StreamController<ACTION>.broadcast();
