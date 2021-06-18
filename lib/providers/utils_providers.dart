@@ -7,5 +7,8 @@ final currentDateProvider = Provider<CurrentDateProvider>((ref) {
 });
 
 final loggerProvider = Provider<Logger>((ref) {
-  return Logger(level: Level.warning, printer: PrettyPrinter());
+  return Logger(
+    level: Level.info,
+    printer: PrettyPrinter(),
+  );
 });

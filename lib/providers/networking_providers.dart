@@ -6,7 +6,6 @@ import 'package:vvvvv_frontend/infrastructure/networking/decorators/with_dio_err
 import 'package:vvvvv_frontend/infrastructure/networking/interceptors/auth_interceptor.dart';
 import 'package:vvvvv_frontend/infrastructure/networking/mappers/dio_error_mapper.dart';
 import 'package:vvvvv_frontend/providers/auth_providers.dart';
-import 'package:vvvvv_frontend/providers/utils_providers.dart';
 
 final unauthenticatedDioProvider = Provider<Dio>((ref) {
   final dioLogger = ref.watch(_dioLoggerProvider);
@@ -15,7 +14,7 @@ final unauthenticatedDioProvider = Provider<Dio>((ref) {
     baseUrl: GeneralConfig.baseUrl,
   ));
 
-  dio.interceptors.add(dioLogger);
+  _addLogger(dioLogger, dio);
 
   return dio;
 });
@@ -28,7 +27,7 @@ final authenticatedDioProvider = Provider<Dio>((ref) {
     baseUrl: GeneralConfig.baseUrl,
   ));
 
-  dio.interceptors.add(dioLogger);
+  _addLogger(dioLogger, dio);
   dio.interceptors.add(authInterceptor);
 
   return dio;
@@ -52,9 +51,13 @@ final _dioErrorMapperProvider = Provider<DioErrorMapper>((ref) {
 });
 
 final _dioLoggerProvider = Provider<PrettyDioLogger>((ref) {
-  final logger = ref.watch(loggerProvider);
-
-  return PrettyDioLogger(
-    logPrint: logger.i,
-  );
+  return PrettyDioLogger();
 });
+
+void _addLogger(PrettyDioLogger logger, Dio dio) {
+  assert(() {
+    dio.interceptors.add(logger);
+
+    return true;
+  }());
+}
