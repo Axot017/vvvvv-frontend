@@ -1,16 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vvvvv_frontend/domain/auth/interactors/auth_interactor.dart';
+import 'package:vvvvv_frontend/domain/auth/models/tokens_pair.dart';
 import 'package:vvvvv_frontend/domain/failures/local_storage_failures.dart';
 import 'package:vvvvv_frontend/domain/failures/network_failures.dart';
-import 'package:vvvvv_frontend/infrastructure/auth/daos/tokens_pair_dao.dart';
-import 'package:vvvvv_frontend/infrastructure/auth/data_sources/auth_local_data_source.dart';
 import 'package:vvvvv_frontend/infrastructure/networking/interceptors/auth_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:vvvvv_frontend/utils/current_date_provider.dart';
 
 import '../../../fallback_values.dart';
 
-class MockedAuthLocalDataSource extends Mock implements AuthLocalDataSource {}
+abstract class LockFunction {
+  void call();
+}
 
 class MockedAuthInteractor extends Mock implements AuthInteractor {}
 
@@ -20,11 +22,17 @@ class MockedRequestInterceptorHandler extends Mock
 class MockedErrorInterceptorHandler extends Mock
     implements ErrorInterceptorHandler {}
 
+class MockedCurrentDateProvider extends Mock implements CurrentDateProvider {}
+
+class MockedDioLock extends Mock implements LockFunction {}
+
 void main() {
-  late AuthLocalDataSource localDataSource;
   late RequestInterceptorHandler requestInterceptorHandler;
   late ErrorInterceptorHandler errorInterceptorHandler;
+  late CurrentDateProvider currentDateProvider;
   late AuthInteractor authInteractor;
+  late LockFunction lockDio;
+  late LockFunction unlockDio;
   late AuthInterceptor interceptor;
 
   setUpAll(() {
@@ -35,68 +43,134 @@ void main() {
     requestInterceptorHandler = MockedRequestInterceptorHandler();
     errorInterceptorHandler = MockedErrorInterceptorHandler();
     authInteractor = MockedAuthInteractor();
-    localDataSource = MockedAuthLocalDataSource();
-    interceptor = AuthInterceptor(localDataSource, authInteractor);
+    currentDateProvider = MockedCurrentDateProvider();
+    lockDio = MockedDioLock();
+    unlockDio = MockedDioLock();
+    interceptor = AuthInterceptor(
+      authInteractor,
+      currentDateProvider,
+      lockDio,
+      unlockDio,
+    );
   });
 
   group('onRequest', () {
-    test('should get token from local storage', () async {
-      when(() => localDataSource.getToken())
-          .thenAnswer((_) => Future.value(null));
-
-      interceptor.onRequest(
-        RequestOptions(path: ''),
-        requestInterceptorHandler,
-      );
-
-      verify(() => localDataSource.getToken()).called(1);
-    });
-
-    test('should call next interceptor after getting token from local storage',
+    test('should call next interceptor when there is no token in storage',
         () async {
-      when(() => localDataSource.getToken())
-          .thenAnswer((_) => Future.value(null));
+      when(() => authInteractor.getTokensPair())
+          .thenAnswer((_) => Future.value());
 
       interceptor.onRequest(
         RequestOptions(path: ''),
         requestInterceptorHandler,
       );
+      await untilCalled(() => authInteractor.getTokensPair());
 
-      await untilCalled(() => localDataSource.getToken());
-
-      verify(() => requestInterceptorHandler.next(any())).called(1);
+      verify(() => authInteractor.getTokensPair()).called(1);
+      verify(
+        () => requestInterceptorHandler.next(
+          any(
+            that: isA<RequestOptions>().having(
+              (options) => options.headers['Authorization'],
+              'authorization header',
+              null,
+            ),
+          ),
+        ),
+      ).called(1);
+      verifyNever(() => currentDateProvider.getCurrentDate());
     });
 
-    test('should add token from local storege request options', () async {
+    test('should add token from local storege request options if it is valid',
+        () async {
       const testAccessToken = 'testAccessToken';
-      when(() => localDataSource.getToken())
-          .thenAnswer((_) => Future.value(TokensPairDao(
-                accessToken: testAccessToken,
-                accessTokenExpirationDate: DateTime(1990),
-                refreshToken: '',
-                refreshTokenExpiretionDate: DateTime(1990),
-              )));
+      when(() => currentDateProvider.getCurrentDate())
+          .thenReturn(DateTime(2030));
+      when(() => authInteractor.getTokensPair()).thenAnswer(
+        (_) => Future.value(
+          TokensPair(
+            accessToken: testAccessToken,
+            accessTokenExpirationDate: DateTime(2050),
+            refreshToken: '',
+            refreshTokenExpiretionDate: DateTime(2100),
+          ),
+        ),
+      );
 
       interceptor.onRequest(
         RequestOptions(path: ''),
         requestInterceptorHandler,
       );
 
-      await untilCalled(() => localDataSource.getToken());
+      await untilCalled(() => authInteractor.getTokensPair());
+      await Future.delayed(Duration.zero);
 
-      verify(() => requestInterceptorHandler.next(
-            any(
-              that: isA<RequestOptions>().having(
-                (options) => options.headers['Authorization'],
-                'authorization header',
-                equals(testAccessToken),
-              ),
+      verify(() => authInteractor.getTokensPair()).called(1);
+      verify(
+        () => requestInterceptorHandler.next(
+          any(
+            that: isA<RequestOptions>().having(
+              (options) => options.headers['Authorization'],
+              'authorization header',
+              equals(testAccessToken),
             ),
-          )).called(1);
+          ),
+        ),
+      ).called(1);
+      verify(() => currentDateProvider.getCurrentDate()).called(1);
+      verifyNever(() => authInteractor.refreshToken(any()));
+    });
+
+    test('should refresh token if current is expired', () async {
+      final currentToken = TokensPair(
+        accessToken: 'testAccessToken',
+        accessTokenExpirationDate: DateTime(2050),
+        refreshToken: 'testRefreshToken',
+        refreshTokenExpiretionDate: DateTime(2100),
+      );
+      final newToken = TokensPair(
+        accessToken: 'testAccessToken2',
+        accessTokenExpirationDate: DateTime(2150),
+        refreshToken: 'testRefreshToken2',
+        refreshTokenExpiretionDate: DateTime(2200),
+      );
+      when(() => currentDateProvider.getCurrentDate()).thenReturn(
+        DateTime(2075),
+      );
+      when(() => authInteractor.getTokensPair()).thenAnswer(
+        (_) => Future.value(currentToken),
+      );
+      when(() => authInteractor.refreshToken(any())).thenAnswer(
+        (_) => Future.value(newToken),
+      );
+
+      interceptor.onRequest(
+        RequestOptions(path: ''),
+        requestInterceptorHandler,
+      );
+      await untilCalled(() => authInteractor.getTokensPair());
+      await Future.delayed(Duration.zero);
+
+      verify(() => authInteractor.getTokensPair()).called(1);
+      verify(
+        () => requestInterceptorHandler.next(
+          any(
+            that: isA<RequestOptions>().having(
+              (options) => options.headers['Authorization'],
+              'authorization header',
+              equals(newToken.accessToken),
+            ),
+          ),
+        ),
+      ).called(1);
+      verify(() => currentDateProvider.getCurrentDate()).called(1);
+      verify(() => authInteractor.refreshToken(currentToken)).called(1);
+      verify(() => lockDio()).called(1);
+      verify(() => unlockDio()).called(1);
     });
 
     test('should reject after local storage read error', () async {
-      when(() => localDataSource.getToken())
+      when(() => authInteractor.getTokensPair())
           .thenAnswer((_) => Future.error(Exception('Some error')));
 
       interceptor.onRequest(
@@ -104,15 +178,19 @@ void main() {
         requestInterceptorHandler,
       );
 
-      await untilCalled(() => localDataSource.getToken());
+      await untilCalled(() => authInteractor.getTokensPair());
 
-      verify(() => requestInterceptorHandler.reject(any(
+      verify(
+        () => requestInterceptorHandler.reject(
+          any(
             that: isA<DioError>().having(
               (e) => e.error,
               'error',
               isA<LocalStorageReadFailure>(),
             ),
-          ))).called(1);
+          ),
+        ),
+      ).called(1);
     });
   });
 

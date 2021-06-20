@@ -6,6 +6,7 @@ import 'package:vvvvv_frontend/infrastructure/networking/decorators/with_dio_err
 import 'package:vvvvv_frontend/infrastructure/networking/interceptors/auth_interceptor.dart';
 import 'package:vvvvv_frontend/infrastructure/networking/mappers/dio_error_mapper.dart';
 import 'package:vvvvv_frontend/providers/auth_providers.dart';
+import 'package:vvvvv_frontend/providers/utils_providers.dart';
 
 final unauthenticatedDioProvider = Provider<Dio>((ref) {
   final dioLogger = ref.watch(_dioLoggerProvider);
@@ -20,12 +21,12 @@ final unauthenticatedDioProvider = Provider<Dio>((ref) {
 });
 
 final authenticatedDioProvider = Provider<Dio>((ref) {
-  final authInterceptor = ref.watch(_authInterceptorProvider);
-  final dioLogger = ref.watch(_dioLoggerProvider);
-
   final dio = Dio(BaseOptions(
     baseUrl: GeneralConfig.baseUrl,
   ));
+
+  final authInterceptor = ref.watch(_authInterceptorProvider(dio));
+  final dioLogger = ref.watch(_dioLoggerProvider);
 
   _addLogger(dioLogger, dio);
   dio.interceptors.add(authInterceptor);
@@ -39,11 +40,17 @@ final withDioErrorMapperDecoretorProvider =
   return WithDioErrorMapperDecorator(dioErrorMapper);
 });
 
-final _authInterceptorProvider = Provider<AuthInterceptor>((ref) {
+final _authInterceptorProvider =
+    Provider.family<AuthInterceptor, Dio>((ref, dio) {
   final authInteractor = ref.watch(authInteractorProvider);
-  final authLocalDataSource = ref.watch(authLocalDataSourceProvider);
+  final dateProvider = ref.watch(currentDateProvider);
 
-  return AuthInterceptor(authLocalDataSource, authInteractor);
+  return AuthInterceptor(
+    authInteractor,
+    dateProvider,
+    dio.lock,
+    dio.unlock,
+  );
 });
 
 final _dioErrorMapperProvider = Provider<DioErrorMapper>((ref) {
