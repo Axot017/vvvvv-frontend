@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void useActionListener<STATE, ACTION>(
-  ActionHandler<STATE, ACTION> actionHandler,
+  ActionManager<STATE, ACTION> actionHandler,
   void Function(ACTION) onAction,
 ) {
   useEffect(() {
@@ -17,7 +17,7 @@ void useActionListener<STATE, ACTION>(
   });
 }
 
-mixin ActionHandler<STATE, ACTION> on StateNotifier<STATE> {
+mixin ActionManager<STATE, ACTION> on StateNotifier<STATE> {
   final _streamController = StreamController<ACTION>.broadcast();
 
   Stream<ACTION> get actionStream => _streamController.stream;

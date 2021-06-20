@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/dtos/tokens_pair_dto.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/mappers/tokens_pair_dto_mapper.dart';
-import 'package:vvvvv_frontend/utils/current_date_provder.dart';
+import 'package:vvvvv_frontend/utils/current_date_provider.dart';
 
 class MockedCurrentDateProvider extends Mock implements CurrentDateProvider {}
 

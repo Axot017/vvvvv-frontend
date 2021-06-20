@@ -1,6 +1,6 @@
 import 'package:vvvvv_frontend/domain/auth/models/tokens_pair.dart';
 import 'package:vvvvv_frontend/infrastructure/auth/dtos/tokens_pair_dto.dart';
-import 'package:vvvvv_frontend/utils/current_date_provder.dart';
+import 'package:vvvvv_frontend/utils/current_date_provider.dart';
 
 class TokensPairDtoMapper {
   final CurrentDateProvider _currentDateProvider;
