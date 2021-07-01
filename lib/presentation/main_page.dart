@@ -15,7 +15,7 @@ class MainPage extends HookWidget {
           onPressed: () {
             appColors.changeColorsScheme(AppColorsScheme.light());
           },
-          child: const Text('test'),
+          child: const Text('test actions 2'),
         ),
       ),
     );
