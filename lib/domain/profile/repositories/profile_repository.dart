@@ -4,5 +4,7 @@ import 'package:vvvvv_frontend/domain/profile/models/current_user.dart';
 abstract class ProfileRepository {
   Future<void> createUser(CreateUserModel model);
 
+  Stream<CurrentUser?> get currentUserStream;
+
   Future<CurrentUser> getCurrentUser();
 }

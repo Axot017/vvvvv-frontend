@@ -5,8 +5,11 @@ import 'package:vvvvv_frontend/infrastructure/networking/decorators/with_dio_err
 import 'package:vvvvv_frontend/infrastructure/profile/data_sources/profile_remote_data_source.dart';
 import 'package:vvvvv_frontend/infrastructure/profile/mappers/create_user_dto_mapper.dart';
 import 'package:vvvvv_frontend/infrastructure/profile/mappers/current_user_dto_mapper.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
+  final _currentUserSubject = BehaviorSubject<CurrentUser?>.seeded(null);
+
   final ProfileRemoteDataSource _remoteDataSource;
   final CurrentUserDtoMapper _currentUserDtoMapper;
   final WithDioErrorMapperDecorator _withDioErrorMapper;
@@ -20,14 +23,28 @@ class ProfileRepositoryImpl implements ProfileRepository {
   );
 
   @override
-  Future<void> createUser(CreateUserModel model) async {
-    final dto = _createUserDtoMapper.fromModel(model);
-    await _withDioErrorMapper(() => _remoteDataSource.createUser(dto));
+  Stream<CurrentUser?> get currentUserStream =>
+      _currentUserSubject.stream.distinct();
+
+  @override
+  Future<void> createUser(CreateUserModel model) {
+    _createUserDtoMapper.fromModel(model);
+    throw UnimplementedError();
   }
 
   @override
   Future<CurrentUser> getCurrentUser() async {
-    final result = await _withDioErrorMapper(_remoteDataSource.getCurrentUser);
-    return _currentUserDtoMapper.toModel(result);
+    try {
+      final result =
+          await _withDioErrorMapper(() => _remoteDataSource.getCurrentUser());
+      final user = _currentUserDtoMapper.toModel(result);
+
+      _currentUserSubject.add(user);
+
+      return user;
+    } catch (e) {
+      _currentUserSubject.add(null);
+      rethrow;
+    }
   }
 }
