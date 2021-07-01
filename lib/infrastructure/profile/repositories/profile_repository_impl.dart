@@ -27,9 +27,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       _currentUserSubject.stream.distinct();
 
   @override
-  Future<void> createUser(CreateUserModel model) {
-    _createUserDtoMapper.fromModel(model);
-    throw UnimplementedError();
+  Future<void> createUser(CreateUserModel model) async {
+    final dto = _createUserDtoMapper.fromModel(model);
+    await _withDioErrorMapper(() => _remoteDataSource.createUser(dto));
   }
 
   @override
