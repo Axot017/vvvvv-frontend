@@ -1,0 +1,6 @@
+/.dart_tool
+/android
+/coverage
+/ios
+/test
+analysis_options.yaml
